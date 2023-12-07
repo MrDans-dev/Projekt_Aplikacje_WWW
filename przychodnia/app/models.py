@@ -9,14 +9,9 @@ from django.http import HttpResponse
 class Slowniki(models.Model):
     slw_akronim = models.CharField(max_length=5, null=False)
     slw_nazwa = models.CharField(max_length=50, null=False)
-    slw_typ = models.IntegerField()
 
 
 class AppUser(models.Model):
-
-    def __str__(self):
-        return f'{self.usr_imie} {self.usr_nazwisko}'
-
     usr_imie = models.CharField(max_length=30, null=False)
     usr_nazwisko = models.CharField(max_length=30, null=False)
 
@@ -35,7 +30,7 @@ class KntKarty(models.Model):
 
 
 class Wizyta(models.Model):
-    wiz_typ = models.IntegerField()
+    wiz_typ = models.ForeignKey(Slowniki, null=True, on_delete=models.SET_NULL)
     wiz_data = models.DateTimeField()
     wiz_kntid = models.ForeignKey(KntKarty, null=True, on_delete=models.SET_NULL)
     wiz_usrid = models.ForeignKey(AppUser, null=True, on_delete=models.SET_NULL)
