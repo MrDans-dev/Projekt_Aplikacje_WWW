@@ -10,10 +10,16 @@ class Slowniki(models.Model):
     slw_akronim = models.CharField(max_length=5, null=False)
     slw_nazwa = models.CharField(max_length=50, null=False)
 
+    def __str__(self):
+        return self.slw_nazwa
+
 
 class AppUser(models.Model):
     usr_imie = models.CharField(max_length=30, null=False)
     usr_nazwisko = models.CharField(max_length=30, null=False)
+
+    def __str__(self):
+        return f'{self.usr_imie} {self.usr_nazwisko}'
 
 
 class KntKarty(models.Model):
