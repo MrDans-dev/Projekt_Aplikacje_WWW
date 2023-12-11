@@ -16,13 +16,13 @@ class SlownikiAdmin(admin.ModelAdmin):
     list_display = ['id', 'slw_akronim', 'slw_nazwa']
 
 
-class WizystyAdmin(admin.ModelAdmin):
+class WizytyAdmin(admin.ModelAdmin):
     list_display = ['id', 'wiz_typ', 'wiz_kntid', 'wiz_data', 'wiz_opis', 'wiz_usrid']
 
 
 admin.site.register(AppUser, AppUsersAdmin)
 admin.site.register(KntKarty, KntKartyAdmin)
 admin.site.register(Slowniki, SlownikiAdmin)
-admin.site.register(Wizyta, WizystyAdmin)
+admin.site.register(Wizyta, WizytyAdmin)
 
 

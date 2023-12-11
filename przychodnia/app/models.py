@@ -36,6 +36,7 @@ class KntKarty(models.Model):
 
 
 class Wizyta(models.Model):
+
     wiz_typ = models.ForeignKey(Slowniki, null=True, on_delete=models.SET_NULL)
     wiz_data = models.DateTimeField()
     wiz_kntid = models.ForeignKey(KntKarty, null=True, on_delete=models.SET_NULL)

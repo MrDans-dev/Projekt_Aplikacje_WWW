@@ -1,4 +1,8 @@
+import datetime
+
+import now
 from rest_framework import serializers, validators, generics
+from  datetime import date
 from .models import *
 
 
@@ -61,14 +65,12 @@ class AppUserSerializer(serializers.ModelSerializer):
 class WizytaSerializer(serializers.ModelSerializer):
     id = serializers.IntegerField(read_only=True)
     wiz_data = serializers.DateTimeField()
-    knt = KntSerializer(many=False,source='wiz_kntid')
+    knt = KntSerializer(many=False, source='wiz_kntid')
     rodzaj_wiz = SlownikSerializer(many=False,source='wiz_typ')
     wiz_add_user = AppUserSerializer(many=False, source='wiz_usrid')
 
     def create(self, validated_data):
-        slownik_data = validated_data.pop('wiz_typ', Slowniki)
-        knt_data = validated_data.pop('knt', KntKarty)
-        app_user_data = validated_data.pop('wiz_usrid', AppUser)
+        return Wizyta.objects.create(**validated_data)
 
     def to_internal_value(self, data):
         rodzaj_wiz_data = data.get('wiz_typ')
@@ -82,5 +84,36 @@ class WizytaSerializer(serializers.ModelSerializer):
         model = Wizyta
         fields = ['id', 'wiz_data', 'knt', 'wiz_add_user', 'wiz_opis', 'rodzaj_wiz']
 
+
+class WizytaExpiredSerializer(serializers.ModelSerializer):
+    id = serializers.IntegerField(read_only=True)
+    wiz_data = serializers.DateTimeField()
+    knt = KntSerializer(many=False, source='wiz_kntid')
+    rodzaj_wiz = SlownikSerializer(many=False, source='wiz_typ')
+    wiz_add_user = AppUserSerializer(many=False, source='wiz_usrid')
+
+    def is_expired(self, wizyta_instance):
+        wizyta_data = wizyta_instance.wiz_data.date()
+        if (datetime.datetime.now().date() - wizyta_data).days > 3:
+            return wizyta_instance.wiz_data
+
+    def to_representation(self, instance):
+        # Override the to_representation method to include the 'expired' field
+        representation = super().to_representation(instance)
+        representation['expired'] = self.is_expired(instance)
+        return representation
+
+    class Meta:
+        model = Wizyta
+        fields = ['id', 'wiz_data', 'knt', 'wiz_add_user', 'wiz_opis', 'rodzaj_wiz']
+
+
+class KntHistorySerializer(serializers.ModelSerializer):
+    class Meta:
+        model = KntKarty
+        fields = '__all__'
+    id = serializers.IntegerField(read_only=True)
+    knt_nazwa = serializers.CharField(required=True)
+    wiz = WizytaSerializer(many=False, source='id')
 
 
